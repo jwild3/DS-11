@@ -20,4 +20,4 @@ jobs:
         pip install black
     - name: Analysing the code with pylint
       run: |
-        python -m black app.py
+        python -m black src/app.py
