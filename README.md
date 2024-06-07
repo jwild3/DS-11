@@ -9,7 +9,7 @@ Our objective is to create a chatbot model that can read and interpret the data 
 source: https://www.leewayhertz.com/llamaindex/
 
 
-Above mentioned diagram explains the functionality of our project as our model will get the files in PDF format and will extract the relevant information from the files and will do the indexing so that it would be easier for the model to find the specific information and the indexed data will be stored to be used in exchange of a user's query and the response will be generated.
+The Above-Mentioned diagram explains the functionality of our project as our model will get the files in PDF format and will extract the relevant information from the files and will do the indexing so that it would be easier for the model to find the specific information and the indexed data will be stored to be used in exchange of a user's query and the response will be generated.
 
 ✔ **Installations:**
 
@@ -23,11 +23,11 @@ Above mentioned diagram explains the functionality of our project as our model w
 
  **Process:**
 
-- Install the library:  _pip install -r requirement.txt_
+- Install the library:  `pip install -r requirement.txt`
 
-- _docker compose up_
+- `docker compose up`
 
-- Run it with _python ./src/app.py_
+- Run it with `python ./src/app.py`
 
 - First offers data connectors to ingest your existing data sources and data formats (APIs, PDFs, docs, SQL, etc.). This explains the usage of elastic search as a database.
 
