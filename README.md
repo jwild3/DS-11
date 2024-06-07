@@ -9,9 +9,9 @@ Our objective is to create a chatbot model that can read and interpret the data 
 source: https://www.leewayhertz.com/llamaindex/
 
 
-The Above-Mentioned diagram explains the functionality of our project as our model will get the files in PDF format and will extract the relevant information from the files and will do the indexing so that it would be easier for the model to find the specific information and the indexed data will be stored to be used in exchange of a user's query and the response will be generated.
+The diagram above illustrates the functionality of our project. Our model processes files in PDF format, extracting relevant information and performing indexing to facilitate easy retrieval. This indexed data is stored and used to respond to user queries. When a query is received, the system searches the indexed information and generates an appropriate response.
 
-✔ **Installations:**
+✔ **Prerequisites:**
 
 - Ollama.
 
@@ -21,26 +21,22 @@ The Above-Mentioned diagram explains the functionality of our project as our mod
 
 - Docker.
 
- **Process:**
+ **Usage:**
 
-- Install the library:  `pip install -r requirement.txt`
+- Install the libraries:  `pip install -r requirement.txt`
 
-- `docker compose up`
+- Start the elastic search db `docker compose up`
 
 - Run it with `python ./src/app.py`
-
-- First offers data connectors to ingest your existing data sources and data formats (APIs, PDFs, docs, SQL, etc.). This explains the usage of elastic search as a database.
-
-- Can easily connect the OpenAI.
 
 
 **ELASTIC SEARCH:**
 
-Elastic search basically used to store strings etc at the very beginning and we are using it to store vector embeddings (a vector embedding, often just called an embedding, is a numerical representation of the semantics, or meaning of your text. Two pieces of text with similar meanings will have mathematically similar embeddings, even if the actual text is quite different). So in this database it will store the PDF files that will contain the detailed information about a product and while responding to a customer's query, our system will go through all the PDF files and will compare the results and will respond to the user's query for the better understanding.
+ElasticSearch is traditionally used to store strings, but we're leveraging it to store vector embeddings. In our system, the database will store enbeddings containing detailed information about products from the german company HYDAC. 
 
 **LlamaIndex:**
 
-LlamaIndex is a data framework specifically designed to work with large language models, including Ollama. It makes the data structured. In our project it will work in a way that it will go through the files and locate text that is related to the meaning of the query terms rather than simple keyword matching this will give increase the ratio of getting the correct answer.
+LlamaIndex is a data framework specifically designed to work with large language models. In our project, it enhances the system by analyzing files and locating text based on the semantic meaning of query terms, rather than relying on simple keyword matching. This approach increases the accuracy and relevance of the responses, improving the chances of getting the correct answer.
 
 **Links:**
 
