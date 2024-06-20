@@ -45,16 +45,19 @@ len(documents)
 # Initialize the embedding model
 # openAI Embeddings
 # embed_model = OpenAIEmbedding(model='text-embedding-3-large', embed_batch_size=100)
+
 # HuggingFace Embedding
-#Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
+Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
+
 # Instructor Embedding
 # embed_model = InstructorEmbedding(model_name="hkunlp/instructor-base")
+
 # ollama embeddings:
-Settings.embed_model = OllamaEmbedding(
-    model_name="llama2",
-    base_url="http://localhost:11434",
-    ollama_additional_kwargs={"mirostat": 0},
-)
+#Settings.embed_model = OllamaEmbedding(
+#    model_name="llama2",
+#    base_url="http://localhost:11434",
+#    ollama_additional_kwargs={"mirostat": 0},
+#)
 
 # Define metadata extractors
 transformations = [
@@ -77,22 +80,27 @@ print(nodes[0].metadata)
 # Connect to the ElasticSearchStore(Since there are still some issues with the Hydac in terms
 # of access to their Elastic SearchStore, we have to set it up on-premise in a docker container)
 # vector_store = ElasticsearchStore(es_url="http://localhost:9200", index_name="RAG-Testing")
-
+print("Connecting to chroma vector store...")
 vector_store = ChromaVectorStore(chroma_collection= chroma_collection)
 
-
+print("Creating storage context")
 storage_context = StorageContext.from_defaults(vector_store=vector_store)
+print("Creating vector store index...")
 index = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
 
+print("creating query engine")
 # Query for testing
 query_engine = index.as_query_engine()
 
 query = "What are the restrictions of the file manager?"
+print("Do the query")
 response = query_engine.query(query)
 # response = query_engine.query("How to init and get data from analog inputs on TTC 500 in C ?")
 print(response)
 
+print("Starting eval")
 evaluator = RelevancyEvaluator()
 
 eval_result = evaluator.evaluate_response(query=query, response=response)
-print(str(eval_result))
+#print(str(eval_result))
+print("Score:" + str(eval_result.score))
