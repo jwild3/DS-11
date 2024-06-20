@@ -3,6 +3,10 @@ import chromadb
 from dotenv import load_dotenv
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, ServiceContext
 from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.embeddings.ollama import OllamaEmbedding
+from llama_index.core.evaluation import RelevancyEvaluator
+
+
 from llama_index.vector_stores.elasticsearch import ElasticsearchStore
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core.extractors import TitleExtractor, KeywordExtractor
@@ -34,21 +38,29 @@ documents = SimpleDirectoryReader("data/pdf", file_metadata=filename_fn).load_da
 
 # Testing if the parsing of the docs was a success
 print(documents[0])
+print(documents[1])
+
 len(documents)
 
 # Initialize the embedding model
 # openAI Embeddings
 # embed_model = OpenAIEmbedding(model='text-embedding-3-large', embed_batch_size=100)
 # HuggingFace Embedding
-Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
+#Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
 # Instructor Embedding
 # embed_model = InstructorEmbedding(model_name="hkunlp/instructor-base")
+# ollama embeddings:
+Settings.embed_model = OllamaEmbedding(
+    model_name="llama2",
+    base_url="http://localhost:11434",
+    ollama_additional_kwargs={"mirostat": 0},
+)
 
 # Define metadata extractors
 transformations = [
     SentenceSplitter(),
-    TitleExtractor(nodes=5),
-    KeywordExtractor(keywords=10),
+    # TitleExtractor(nodes=5),
+    # KeywordExtractor(keywords=10),
     # OpenAIEmbedding(model='text-embedding-3-large', embed_batch_size=100)
 ]
 
@@ -74,5 +86,13 @@ index = VectorStoreIndex.from_documents(documents, storage_context=storage_conte
 
 # Query for testing
 query_engine = index.as_query_engine()
-response = query_engine.query("How to init and get data from analog inputs on TTC 500 in C ?")
+
+query = "What are the restrictions of the file manager?"
+response = query_engine.query(query)
+# response = query_engine.query("How to init and get data from analog inputs on TTC 500 in C ?")
 print(response)
+
+evaluator = RelevancyEvaluator()
+
+eval_result = evaluator.evaluate_response(query=query, response=response)
+print(str(eval_result))
