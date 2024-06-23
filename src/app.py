@@ -1,3 +1,4 @@
+import asyncio
 import os
 import chromadb
 from dotenv import load_dotenv
@@ -18,8 +19,7 @@ from llama_index.llms.ollama import Ollama
 from llama_index.core import Settings
 
 import questions as q
-
-
+from src.evaluation import DocuEval
 
 # The OPENAI should be in the env variables
 print("OPENAI_API_KEY:", os.environ['OPENAI_API_KEY'])
@@ -84,8 +84,8 @@ vector_store = ChromaVectorStore(chroma_collection= chroma_collection)
 print("Creating storage context")
 storage_context = StorageContext.from_defaults(vector_store=vector_store)
 print("Creating vector store index...")
-index = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
-
+#index = VectorStoreIndex.from_documents(documents, storage_context=storage_context, use_async=True)
+index = VectorStoreIndex(nodes, storage_context=storage_context)
 print("creating query engine")
 # Query for testing
 query_engine = index.as_query_engine()
@@ -95,23 +95,13 @@ print("Starting eval")
 #query = "What are the restrictions of the file manager?"
 #query = "What is the smallest possible measurement rate that can be set for recordings using the HMG 4000 device, depending on the number of active measurement channels?"
 query = "What are the Mechanical connection for the Pressure transmitter HDA 4400?"
-for count , query in enumerate(q.get_questions()):
-    print("Question:" + str(count) + " Query:" + str(query))
-    print("Do the query")
-    response = query_engine.query(query[0])
-    # response = query_engine.query("How to init and get data from analog inputs on TTC 500 in C ?")
-    print(response)
 
-    print("Starting eval")
-    evaluator_relevancy = RelevancyEvaluator()
+evaluator = DocuEval(index, query_engine)
 
-    # print("Generate question context pairs...")
-    # qa_dataset = generate_question_context_pairs(nodes, llm=Settings.llm, num_questions_per_chunk=2)
+eval_results = evaluator.run_evaluation(q.get_questions()[:100])
 
-    eval_result = evaluator_relevancy.evaluate_response(query=query, response=response)
-    #print(str(eval_result))
-    print("Relevancy Score:" + str(eval_result.score))
 
-    eval_Faithfulness = FaithfulnessEvaluator()
-    eval_faithfull_result = eval_Faithfulness.evaluate_response(query=query, response=response)
-    print("Faithfulness Score:" + str(eval_faithfull_result.score))
+
+print("Total Relevancy Score:" + str(eval_results["relevancy"]))
+
+print("Total Faithfulness Score:" + str(eval_results["faithfulness"]))
