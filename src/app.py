@@ -4,8 +4,7 @@ from dotenv import load_dotenv
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, ServiceContext
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.embeddings.ollama import OllamaEmbedding
-from llama_index.core.evaluation import RelevancyEvaluator
-
+from llama_index.core.evaluation import RelevancyEvaluator, generate_question_context_pairs, FaithfulnessEvaluator, BatchEvalRunner
 
 from llama_index.vector_stores.elasticsearch import ElasticsearchStore
 from llama_index.core.node_parser import SentenceSplitter
@@ -17,6 +16,8 @@ from llama_index.vector_stores.chroma import ChromaVectorStore
 
 from llama_index.llms.ollama import Ollama
 from llama_index.core import Settings
+
+import questions as q
 
 
 
@@ -37,10 +38,7 @@ filename_fn = lambda filename: {"file_name": filename}
 documents = SimpleDirectoryReader("data/pdf", file_metadata=filename_fn).load_data()
 
 # Testing if the parsing of the docs was a success
-print(documents[0])
-print(documents[1])
-
-len(documents)
+print("Documents count: " + str(len(documents)))
 
 # Initialize the embedding model
 # openAI Embeddings
@@ -92,15 +90,28 @@ print("creating query engine")
 # Query for testing
 query_engine = index.as_query_engine()
 
-query = "What are the restrictions of the file manager?"
-print("Do the query")
-response = query_engine.query(query)
-# response = query_engine.query("How to init and get data from analog inputs on TTC 500 in C ?")
-print(response)
 
 print("Starting eval")
-evaluator = RelevancyEvaluator()
+#query = "What are the restrictions of the file manager?"
+#query = "What is the smallest possible measurement rate that can be set for recordings using the HMG 4000 device, depending on the number of active measurement channels?"
+query = "What are the Mechanical connection for the Pressure transmitter HDA 4400?"
+for count , query in enumerate(q.get_questions()):
+    print("Question:" + str(count) + " Query:" + str(query))
+    print("Do the query")
+    response = query_engine.query(query[0])
+    # response = query_engine.query("How to init and get data from analog inputs on TTC 500 in C ?")
+    print(response)
 
-eval_result = evaluator.evaluate_response(query=query, response=response)
-#print(str(eval_result))
-print("Score:" + str(eval_result.score))
+    print("Starting eval")
+    evaluator_relevancy = RelevancyEvaluator()
+
+    # print("Generate question context pairs...")
+    # qa_dataset = generate_question_context_pairs(nodes, llm=Settings.llm, num_questions_per_chunk=2)
+
+    eval_result = evaluator_relevancy.evaluate_response(query=query, response=response)
+    #print(str(eval_result))
+    print("Relevancy Score:" + str(eval_result.score))
+
+    eval_Faithfulness = FaithfulnessEvaluator()
+    eval_faithfull_result = eval_Faithfulness.evaluate_response(query=query, response=response)
+    print("Faithfulness Score:" + str(eval_faithfull_result.score))
