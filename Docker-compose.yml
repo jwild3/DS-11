@@ -19,5 +19,16 @@ services:
         ]
       interval: 10s
       retries: 60
+  chromadb:
+    image: chromadb/chroma
+    environment:
+      - CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER="chromadb.auth.token.TokenConfigServerAuthCredentialsProvider" \
+      - CHROMA_SERVER_AUTH_PROVIDER="chromadb.auth.token.TokenAuthServerProvider" \
+      - CHROMA_SERVER_AUTH_TOKEN_TRANSPORT_HEADER="X_CHROMA_TOKEN" \
+      - CHROMA_SERVER_AUTH_CREDENTIALS="test-token"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data/database/:/chroma/chroma
 
 ## From: https://github.com/run-llama/llama_index/blob/main/llama-index-integrations/embeddings/llama-index-embeddings-elasticsearch/docker-compose.yml

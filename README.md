@@ -25,14 +25,11 @@ The diagram above illustrates the functionality of our project. Our model proces
 
 - Install the libraries:  `pip install -r requirement.txt`
 
-- Start the elastic search db `docker compose up`
+- Install the used llm: `ollama install *llm*`
+
+- Start the chroma db `docker compose up`
 
 - Run it with `python ./src/app.py`
-
-
-**ELASTIC SEARCH:**
-
-ElasticSearch is traditionally used to store strings, but we're leveraging it to store vector embeddings. In our system, the database will store enbeddings containing detailed information about products from the german company HYDAC. 
 
 **LlamaIndex:**
 
