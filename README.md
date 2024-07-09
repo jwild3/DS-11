@@ -45,6 +45,3 @@ LlamaIndex:
 
 https://www.llamaindex.ai/
 
-Elastic Search:
-
-https://www.elastic.co/
