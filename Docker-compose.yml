@@ -1,4 +1,4 @@
-## This docker-compose launches the dummy elastic search database on port :9200
+## This docker-compose launches the dummy chroma db
 version: "3"
 
 services:
